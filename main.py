@@ -14,11 +14,20 @@ TEXT = (
     "headbutted my ankle, then stole my warm seat the second I stood up.\n"
 )
 
+DEFAULT_OUTPUT_DIR = "/output"
+DEST_NAME = "entry.txt"
+
 
 def main():
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8") as f:
-        f.write(TEXT)
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or DEFAULT_OUTPUT_DIR
+    os.makedirs(out_dir, exist_ok=True)
+    dest = os.path.join(out_dir, DEST_NAME)
+    with open(dest, "w", encoding="utf-8") as handle:
+        handle.write(TEXT)
+    with open(dest, "r", encoding="utf-8") as handle:
+        written = handle.read()
+    assert written == TEXT, "entry.txt differs from the line after writing"
+    print(f"wrote {dest} ({len(TEXT)} chars, one line)")
 
 
 if __name__ == "__main__":
